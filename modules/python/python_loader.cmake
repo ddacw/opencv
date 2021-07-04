@@ -23,7 +23,7 @@ else()
 endif()
 
 set(PYTHON_LOADER_FILES
-    "setup.py" "cv2/__init__.py"
+    "setup.py" "cv2/__init__.py" "cv2/__init__.pyi"
     "cv2/load_config_py2.py" "cv2/load_config_py3.py"
     "cv2/_extra_py_code/__init__.py"
 )
