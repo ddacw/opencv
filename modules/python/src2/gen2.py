@@ -377,6 +377,9 @@ class ClassInfo(object):
                 convert_ctype_name_to_pytype_name(class_property.tp)
             )
 
+        if self.constructor:
+            stub += indent(self.constructor.generate_stub(codegen), CLASS_MEMBERS_INDENT)
+
         for _, method_info in sorted(self.methods.items()):
             stub += indent(method_info.generate_stub(codegen), CLASS_MEMBERS_INDENT)
         return stub
@@ -642,7 +645,7 @@ class FuncVariant(object):
             return_type = "Tuple[{}]".format(
                 ", ".join(convert_ctype_name_to_pytype_name(self.args[argno].tp) for _, argno in self.py_outlist)
             )
-        elif len(self.py_outlist) == 1:
+        elif len(self.py_outlist) == 1 and not self.isconstructor:
             # In case of function has return value - use it, otherwise derive return type from
             # output arg
             if self.rettype:
@@ -670,7 +673,8 @@ class FuncVariant(object):
             else:
                 # annotated args are `self`
                 annotated_args = "self"
-        return result.format(func_name=self.name, func_args=annotated_args,
+        return result.format(func_name="__init__" if self.isconstructor else self.name,
+                             func_args=annotated_args,
                              func_return_type=return_type)
 
 
