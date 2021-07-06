@@ -436,7 +436,7 @@ def is_tuple(typename):
     return typename.startswith("tuple")
 
 
-def is_collection_type(typename):
+def is_sequence_type(typename):
     return typename.startswith("vector")
 
 
@@ -463,17 +463,17 @@ def convert_ctype_name_to_pytype_name(typename):
     pytype = CTYPE_TO_PYTYPE_MAP.get(typename)
     if pytype is not None:
         return pytype
-    if is_collection_type(typename):
+    if is_sequence_type(typename):
         if is_template_class_instantiation(typename):
-            collection_pytype = convert_ctype_name_to_pytype_name(
+            sequence_pytype = convert_ctype_name_to_pytype_name(
                 get_template_instantiation_type(typename)
             )
         else:
-            # maxsplit=1 - recursively find pytype of collection always examinating
+            # maxsplit=1 - recursively find pytype of sequence always examinating
             # the outermost of inner type:
-            # Example: vector_vector_Mat -> Collection[Collection[Mat]]
-            collection_pytype = convert_ctype_name_to_pytype_name(typename.split("_", 1)[-1])
-        return "Collection[{}]".format(collection_pytype)
+            # Example: vector_vector_Mat -> Sequence[Sequence[Mat]]
+            sequence_pytype = convert_ctype_name_to_pytype_name(typename.split("_", 1)[-1])
+        return "Sequence[{}]".format(sequence_pytype)
     if is_pointer_type(typename):
         if typename.endswith("*"):
             return convert_ctype_name_to_pytype_name(typename[:-1])
